@@ -1,39 +1,51 @@
 #include <stdio.h>
 
 
-int proceso_anding(unsigned short int ip[4], unsigned short int mascara_red[4],  unsigned short int resultado[4]){
+void proceso_anding(unsigned short int ip[4], unsigned short int mascara_red[4],  unsigned short int resultado[4]){
     //unsigned short int mascara_red[4] = {255, 0, 0, 0};
     // se mandan todos los valores ya que dependiendo de su clase, sus bits de host y red cambian
-    for (int i= 0; i<4, i++){
+    for (int i= 0; i<4; i++){
         resultado[i] = ip[i] & mascara_red[i];
     }
     
-    return resultado; // linea de codigo que no es completamente necesaria
+    //return resultado; // linea de codigo que no es completamente necesaria
 } //funcion para obtener la IP madre o IP red
+
+
 
 int main(){
     unsigned short int ip[4];
-    unsigned short int aux_ip[4];
     unsigned short int mascara_red[4];
-    unsigned short char clase;
+    unsigned short int aux_ip[4];
+    unsigned char clase;
     //el usuario ingresa el valor de su ip:
     printf("\t\t\tCALCULADORA DE IP:");
     printf("Ingrese el valor de su IP por espacios (considerando que tiene 4):\n");
     for(int i=0; i < 4; i++){
         printf("Ingrese el valor de su digito %d: ", i+1);
-        scanf("%d", &ip[i]);
+        scanf("%hd", &ip[i]);
     }
     
+    printf("Su IP es la siguiente: \n");
+    for(int i = 0; i< 4; i++){
+        if (i == 3) {
+            printf("%d", ip[i]); // Sin punto después del último número
+        } else {
+            printf("%d.", ip[i]);
+        }
+    }
+    
+    printf("\n");
     
     //--------- ALGORITMO DE SELECCIÓN DE LAS CLASES PARA CADA IP--------------
     //proceso para determinar la clase de la IP
-    if(ip[0]&&128){ // si la condicion resulta verdadera
+    if(ip[0]&128){ // si la condicion resulta verdadera
         //decimos que no es de clase A ya que la clase A no tiene el MSB encendido, siempre es 0
-        if(ip[0]&&64){ //si la condicion resulta verdadera
+        if(ip[0]&64){ //si la condicion resulta verdadera
         //decimos que no es de clase B ya que los primeros dos bits de la clase B es 10
-            if(ip[0]&&32){ // si la condicion resulta verdadera
+            if(ip[0]&32){ // si la condicion resulta verdadera
             //decimos que no es de clase C ya que los primeros tres bits de la clase C es 110
-                if(ip[0]&&16){ // si la condicion resulta verdadera
+                if(ip[0]&16){ // si la condicion resulta verdadera
                 //decimos directamente que es de clase E ya que sus bits son 1111 
                     printf("Es clase E\n");
                     clase = 'E';
@@ -57,6 +69,121 @@ int main(){
         
     }
     
+    
+    
+    switch(clase)
+    {
+        case 'A':
+            //Para obtener su IP de red:
+            // Asignar valores a mascara_red
+            mascara_red[0] = 255;
+            mascara_red[1] = 0;
+            mascara_red[2] = 0;
+            mascara_red[3] = 0;
+            proceso_anding(ip, mascara_red, aux_ip);
+            
+            
+            printf("Su IP madre o IP de Red es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            
+            //Para obtener la IP de broadcast:
+            for (int i = 0; i < 4; i++){
+                mascara_red[i] = ~mascara_red[i];
+            }
+            proceso_anding(ip, mascara_red, aux_ip);
+            printf("\nSu IP de broadcast es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            break;
+        case 'B':
+            //Para obtener su IP de red:
+            // Asignar valores a mascara_red
+            mascara_red[0] = 255;
+            mascara_red[1] = 255;
+            mascara_red[2] = 0;
+            mascara_red[3] = 0;
+            proceso_anding(ip, mascara_red, aux_ip);
+            printf("Su IP madre o IP de Red es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            
+            //Para obtener la IP de broadcast:
+            for (int i = 0; i < 4; i++){
+                mascara_red[i] = ~mascara_red[i];
+            }
+            proceso_anding(ip, mascara_red, aux_ip);
+            printf("\nSu IP de broadcast es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            break;
+        case 'C':
+            //Para obtener su IP de red:
+            // Asignar valores a mascara_red
+            mascara_red[0] = 255;
+            mascara_red[1] = 255;
+            mascara_red[2] = 255;
+            mascara_red[3] = 0;
+            proceso_anding(ip, mascara_red, aux_ip);
+            printf("Su IP madre o IP de Red es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            
+            //Para obtener la IP de broadcast:
+            for (int i = 0; i < 4; i++){
+                mascara_red[i] = ~mascara_red[i];
+            }
+            proceso_anding(ip, mascara_red, aux_ip);
+            printf("\nSu IP de broadcast es: \n");
+            for(int i =0; i < 4; i++){
+                if (i == 3) {
+                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                } else {
+                     printf("%d.", aux_ip[i]);
+                }
+            }
+            
+            break;
+        case 'E' || 'D':
+            printf("Las IP de clase E y D estan reservadas para otras actividades.\n");
+            printf("Por lo tanto no se pueden proporcionar los datos de IP Red y broadcast.\n");
+            break;
+        default:
+        
+            printf("Rangos fuera de los establecidos.\n");
+            break;
+        
+    }
     
     
     
