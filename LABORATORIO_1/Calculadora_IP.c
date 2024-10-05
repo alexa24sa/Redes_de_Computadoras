@@ -11,6 +11,17 @@ void proceso_anding(unsigned short int ip[4], unsigned short int mascara_red[4],
     //return resultado; // linea de codigo que no es completamente necesaria
 } //funcion para obtener la IP madre o IP red
 
+void proceso_anding_broadcast(unsigned short int ip[4], unsigned short int mascara_red[4],  unsigned short int resultado[4]){
+    //unsigned short int mascara_red[4] = {255, 0, 0, 0};
+    // se mandan todos los valores ya que dependiendo de su clase, sus bits de host y red cambian
+    short int aux = 0;
+    for (int i= 0; i<4; i++){
+        aux = 255 - ip[i];
+        resultado[i] = (ip[i]+aux) & mascara_red[i];
+    }
+    
+    //return resultado; // linea de codigo que no es completamente necesaria
+} //funcion para obtener la IP madre o IP red
 
 
 int main(){
@@ -19,7 +30,7 @@ int main(){
     unsigned short int aux_ip[4];
     unsigned char clase;
     //el usuario ingresa el valor de su ip:
-    printf("\t\t\tCALCULADORA DE IP:");
+    printf("\t\t\tCALCULADORA DE IP:\n");
     printf("Ingrese el valor de su IP por espacios (considerando que tiene 4):\n");
     for(int i=0; i < 4; i++){
         printf("Ingrese el valor de su digito %d: ", i+1);
@@ -74,6 +85,36 @@ int main(){
     switch(clase)
     {
         case 'A':
+            // ------PARA CONOCER EL TIPO DE MI IP:-------
+            printf("El tipo de su IP es: ");
+            if(ip[1]==255){
+                if(ip[2]==255){
+                    if(ip[3]==255){
+                        printf("Es de tipo broadcast.\n");
+                    }else{
+                        printf("Es de tipo Host.\n");
+                    }
+                }else{
+                   printf("Es de tipo Host.\n"); 
+                }
+            }else{
+                if(ip[1]==0){
+                   if(ip[2]==0){
+                       if(ip[3]==0){
+                         printf("Es de tipo Red.\n"); 
+                       }
+                   } else {
+                       printf("Es de tipo Host.\n");
+                   } 
+                }else{
+                    printf("Es de tipo Host.\n");
+                }
+            }
+        
+        
+        
+        
+        
             //Para obtener su IP de red:
             // Asignar valores a mascara_red
             mascara_red[0] = 255;
@@ -109,6 +150,29 @@ int main(){
             
             break;
         case 'B':
+            // ------PARA CONOCER EL TIPO DE MI IP:-------
+            printf("El tipo de su IP es: ");
+            if(ip[2]==255){
+                if(ip[3]==255){
+                    printf("Es de tipo broadcast.\n");
+                }else{
+                   printf("Es de tipo Host.\n"); 
+                }
+            }else{
+                if(ip[2]==0){
+                   if(ip[3]==0){
+                       printf("Es de tipo Red.\n"); 
+                   }else {
+                       printf("Es de tipo Host.\n");
+                   } 
+                }else{
+                    printf("Es de tipo Host.\n");
+                }
+            }
+        
+        
+        
+        
             //Para obtener su IP de red:
             // Asignar valores a mascara_red
             mascara_red[0] = 255;
@@ -142,6 +206,19 @@ int main(){
             
             break;
         case 'C':
+            // ------PARA CONOCER EL TIPO DE MI IP:-------
+            printf("El tipo de su IP es: ");
+            if(ip[3]==255){
+                printf("Es de tipo broadcast.\n");
+            }else{
+                if(ip[3]==0){
+                    printf("Es de tipo Red.\n");  
+                }else{
+                    printf("Es de tipo Host.\n");
+                }
+            }
+        
+        
             //Para obtener su IP de red:
             // Asignar valores a mascara_red
             mascara_red[0] = 255;
