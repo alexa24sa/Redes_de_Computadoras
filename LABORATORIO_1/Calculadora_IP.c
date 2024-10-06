@@ -1,24 +1,24 @@
 #include <stdio.h>
 
 
-void proceso_anding(unsigned short int ip[4], unsigned short int mascara_red[4],  unsigned short int resultado[4]){
+void proceso_anding(unsigned char ip[4], unsigned char mascara_red[4],  unsigned char resultado[4]){
     //unsigned short int mascara_red[4] = {255, 0, 0, 0};
     // se mandan todos los valores ya que dependiendo de su clase, sus bits de host y red cambian
-    for (int i= 0; i<4; i++){
+    for (unsigned char i= 0; i<4; i++){
         resultado[i] = ip[i] & mascara_red[i];
     }
     
     //return resultado; // linea de codigo que no es completamente necesaria
 } //funcion para obtener la IP madre o IP red
 
-void proceso_broadcast(unsigned char clase, unsigned short int ip[4], unsigned short int resultado[4]){
+void proceso_broadcast(unsigned char clase, unsigned char ip[4], unsigned char resultado[4]){
     //unsigned short int mascara_red[4] = {255, 0, 0, 0};
     // se mandan todos los valores ya que dependiendo de su clase, sus bits de host y red cambian
     unsigned short int aux = 0;
     
     switch (clase){
         case 'A':
-            for(int i=1; i<4; i++){
+            for(unsigned char i=1; i<4; i++){
                 aux = 255 - ip[i];
                 resultado[i] = ip[i] + aux;
             } 
@@ -26,14 +26,14 @@ void proceso_broadcast(unsigned char clase, unsigned short int ip[4], unsigned s
             
             break;
         case 'B':
-            for(int i=2; i<4; i++){
+            for(unsigned char i=2; i<4; i++){
                 aux = 255 - ip[i];
                 resultado[i] = ip[i] + aux;
             } 
             
             break;
         case 'C':
-            for(int i=3; i<4; i++){
+            for(unsigned char i=3; i<4; i++){
                 aux = 255 - ip[i];
                 resultado[i] = ip[i] + aux;
             } 
@@ -49,24 +49,24 @@ void proceso_broadcast(unsigned char clase, unsigned short int ip[4], unsigned s
 
 
 int main(){
-    unsigned short int ip[4];
-    unsigned short int mascara_red[4];
-    unsigned short int aux_ip[4];
+    unsigned char ip[4];
+    unsigned char mascara_red[4];
+    unsigned char aux_ip[4];
     unsigned char clase;
     //el usuario ingresa el valor de su ip:
     printf("\t\t\tCALCULADORA DE IP:\n");
     printf("Ingrese el valor de su IP por espacios (considerando que tiene 4):\n");
     for(int i=0; i < 4; i++){
         printf("Ingrese el valor de su digito %d: ", i+1);
-        scanf("%hd", &ip[i]);
+        scanf("%hhu", &ip[i]);
     }
     
     printf("Su IP es la siguiente: \n");
     for(int i = 0; i< 4; i++){
         if (i == 3) {
-            printf("%d", ip[i]); // Sin punto después del último número
+            printf("%hhu", ip[i]); // Sin punto después del último número
         } else {
-            printf("%d.", ip[i]);
+            printf("%hhu.", ip[i]);
         }
     }
     
@@ -156,11 +156,11 @@ int main(){
             
             
             printf("Su IP madre o IP de Red es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i=0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
@@ -171,11 +171,11 @@ int main(){
             }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i =0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
@@ -214,11 +214,11 @@ int main(){
             mascara_red[3] = 0;
             proceso_anding(ip, mascara_red, aux_ip);
             printf("Su IP madre o IP de Red es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i=0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
@@ -229,11 +229,11 @@ int main(){
             }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i=0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
@@ -263,11 +263,11 @@ int main(){
             mascara_red[3] = 0;
             proceso_anding(ip, mascara_red, aux_ip);
             printf("Su IP madre o IP de Red es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i =0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
@@ -278,11 +278,11 @@ int main(){
             }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
-            for(int i =0; i < 4; i++){
+            for(unsigned char i =0; i < 4; i++){
                 if (i == 3) {
-                     printf("%d", aux_ip[i]); // Sin punto después del último número
+                     printf("%hhu", aux_ip[i]); // Sin punto después del último número
                 } else {
-                     printf("%d.", aux_ip[i]);
+                     printf("%hhu.", aux_ip[i]);
                 }
             }
             
