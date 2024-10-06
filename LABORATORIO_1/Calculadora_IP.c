@@ -75,35 +75,41 @@ int main(){
     //--------- ALGORITMO DE SELECCIÓN DE LAS CLASES PARA CADA IP--------------
     //proceso para determinar la clase de la IP
     printf("\nClase de IP: ");
-    if(ip[0]&128){ // si la condicion resulta verdadera
-        //decimos que no es de clase A ya que la clase A no tiene el MSB encendido, siempre es 0
-        if(ip[0]&64){ //si la condicion resulta verdadera
-        //decimos que no es de clase B ya que los primeros dos bits de la clase B es 10
-            if(ip[0]&32){ // si la condicion resulta verdadera
-            //decimos que no es de clase C ya que los primeros tres bits de la clase C es 110
-                if(ip[0]&16){ // si la condicion resulta verdadera
-                //decimos directamente que es de clase E ya que sus bits son 1111 
-                    printf("Es clase E\n");
-                    clase = 'E';
-                }else{ // si no es verdadera, únicamente nos queda decir que es de clase D
-                //ya que en este caso solo tendría los bits 1110 que corresponde a la clase D
-                    printf("Es clase D\n");
-                    clase = 'D';
-                }
+    if(ip[0]&256){
+        printf("Fuera de los  límites establecidos, se cierra el programa.\n");
+        return 0;
+    } else {
+        if(ip[0]&128){ // si la condicion resulta verdadera
+            //decimos que no es de clase A ya que la clase A no tiene el MSB encendido, siempre es 0
+            if(ip[0]&64){ //si la condicion resulta verdadera
+            //decimos que no es de clase B ya que los primeros dos bits de la clase B es 10
+                if(ip[0]&32){ // si la condicion resulta verdadera
+                //decimos que no es de clase C ya que los primeros tres bits de la clase C es 110
+                    if(ip[0]&16){ // si la condicion resulta verdadera
+                    //decimos directamente que es de clase E ya que sus bits son 1111 
+                        printf("Es clase E\n");
+                        clase = 'E';
+                    }else{ // si no es verdadera, únicamente nos queda decir que es de clase D
+                    //ya que en este caso solo tendría los bits 1110 que corresponde a la clase D
+                        printf("Es clase D\n");
+                        clase = 'D';
+                    }
                 
+                }else{
+                    printf("Es clase C\n");
+                    clase = 'C';
+                }
             }else{
-                printf("Es clase C\n");
-                clase = 'C';
+                printf("Es clase B\n");
+                clase = 'B';
             }
         }else{
-            printf("Es clase B\n");
-            clase = 'B';
-        }
-    }else{
-        printf("Es clase A\n");
-        clase = 'A';
+            printf("Es clase A\n");
+            clase = 'A';
         
+        }
     }
+    
     
     
     
@@ -160,9 +166,9 @@ int main(){
             
             
             //Para obtener la IP de broadcast:
-            for (int i = 0; i < 4; i++){
+            /*for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
-            }
+            }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
@@ -218,9 +224,9 @@ int main(){
             
             
             //Para obtener la IP de broadcast:
-            for (int i = 0; i < 4; i++){
+            /*for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
-            }
+            }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
@@ -267,9 +273,9 @@ int main(){
             
             
             //Para obtener la IP de broadcast:
-            for (int i = 0; i < 4; i++){
+            /*for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
-            }
+            }*/
             proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
