@@ -11,17 +11,41 @@ void proceso_anding(unsigned short int ip[4], unsigned short int mascara_red[4],
     //return resultado; // linea de codigo que no es completamente necesaria
 } //funcion para obtener la IP madre o IP red
 
-void proceso_anding_broadcast(unsigned short int ip[4], unsigned short int mascara_red[4],  unsigned short int resultado[4]){
+void proceso_broadcast(unsigned char clase, unsigned short int ip[4], unsigned short int resultado[4]){
     //unsigned short int mascara_red[4] = {255, 0, 0, 0};
     // se mandan todos los valores ya que dependiendo de su clase, sus bits de host y red cambian
-    short int aux = 0;
-    for (int i= 0; i<4; i++){
-        aux = 255 - ip[i];
-        resultado[i] = (ip[i]+aux) & mascara_red[i];
-    }
+    unsigned short int aux = 0;
     
-    //return resultado; // linea de codigo que no es completamente necesaria
-} //funcion para obtener la IP madre o IP red
+    switch (clase){
+        case 'A':
+            for(int i=1; i<4; i++){
+                aux = 255 - ip[i];
+                resultado[i] = ip[i] + aux;
+            } 
+            
+            
+            break;
+        case 'B':
+            for(int i=2; i<4; i++){
+                aux = 255 - ip[i];
+                resultado[i] = ip[i] + aux;
+            } 
+            
+            break;
+        case 'C':
+            for(int i=3; i<4; i++){
+                aux = 255 - ip[i];
+                resultado[i] = ip[i] + aux;
+            } 
+            
+            break;
+        default:
+            printf("\nLos par%cmetros no entran dentro de ninguno de los casos, error.\n", 160);
+        
+        
+    }
+
+} 
 
 
 int main(){
@@ -50,6 +74,7 @@ int main(){
     
     //--------- ALGORITMO DE SELECCIÓN DE LAS CLASES PARA CADA IP--------------
     //proceso para determinar la clase de la IP
+    printf("\nClase de IP: ");
     if(ip[0]&128){ // si la condicion resulta verdadera
         //decimos que no es de clase A ya que la clase A no tiene el MSB encendido, siempre es 0
         if(ip[0]&64){ //si la condicion resulta verdadera
@@ -138,7 +163,7 @@ int main(){
             for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
             }
-            proceso_anding(ip, mascara_red, aux_ip);
+            proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
                 if (i == 3) {
@@ -149,6 +174,8 @@ int main(){
             }
             
             break;
+            
+            
         case 'B':
             // ------PARA CONOCER EL TIPO DE MI IP:-------
             printf("El tipo de su IP es: ");
@@ -194,7 +221,7 @@ int main(){
             for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
             }
-            proceso_anding(ip, mascara_red, aux_ip);
+            proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
                 if (i == 3) {
@@ -205,6 +232,9 @@ int main(){
             }
             
             break;
+            
+            
+            
         case 'C':
             // ------PARA CONOCER EL TIPO DE MI IP:-------
             printf("El tipo de su IP es: ");
@@ -240,7 +270,7 @@ int main(){
             for (int i = 0; i < 4; i++){
                 mascara_red[i] = ~mascara_red[i];
             }
-            proceso_anding(ip, mascara_red, aux_ip);
+            proceso_broadcast(clase, ip, aux_ip);
             printf("\nSu IP de broadcast es: \n");
             for(int i =0; i < 4; i++){
                 if (i == 3) {
@@ -251,21 +281,22 @@ int main(){
             }
             
             break;
+            
+            
+            
         case 'E' || 'D':
             printf("Las IP de clase E y D estan reservadas para otras actividades.\n");
             printf("Por lo tanto no se pueden proporcionar los datos de IP Red y broadcast.\n");
             break;
+            
+            
+            
         default:
         
             printf("Rangos fuera de los establecidos.\n");
             break;
         
     }
-    
-    
-    
-    
-    
     return 0;
     
 }
