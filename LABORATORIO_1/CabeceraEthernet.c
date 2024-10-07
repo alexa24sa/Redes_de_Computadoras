@@ -5,7 +5,6 @@ int main() {
     unsigned char cabecera [14];
     short temp; //Almacenar valores temporales
     char i; //para iteraciones
-    unsigned short int TOT;
 
     printf("Ingresa la cabecera Ethernet: \n");
 
@@ -40,15 +39,15 @@ int main() {
         printf("%x, ", cabecera[i]);
     }
 
-    TOT = (cabecera[12] << 8) | cabecera[13];
+    temp = (cabecera[12] << 8) | cabecera[13];
 
-    if(TOT <= 1500) {
+    if(temp <= 1500) {
         printf("\n\nEs un protocolo LLC");
     }
-    else if(TOT == 2048) {
+    else if(temp == 2048) {
         printf("\n\nEs un protocolo IP");
     }
-    else if(TOT == 2054) {
+    else if(temp == 2054) {
         printf("\n\nEs un protocolo ARP");
     }
 
