@@ -3,7 +3,7 @@
 int main() {
 
     unsigned char cabecera [14];
-    short temp; //Almacenar valores temporales
+    unsigned short temp; //Almacenar valores temporales
     char i; //para iteraciones
 
     printf("Ingresa la cabecera Ethernet: \n");
