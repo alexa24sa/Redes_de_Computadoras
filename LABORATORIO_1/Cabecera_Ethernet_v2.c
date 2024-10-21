@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-void analizar_trama(unsigned trama[36], unsigned char tipo){
-    if(tipo == 'T'){
+void analizar_trama(unsigned char cabecera[36]){
+    // if(tipo == 'T'){
         unsigned char SAPd = cabecera[14];
         unsigned char SAPo = cabecera[15];
         unsigned char CC_1 = cabecera[16];
@@ -40,21 +40,21 @@ void analizar_trama(unsigned trama[36], unsigned char tipo){
         printf("\nSAP Destino: %hx", SAPd);
         printf("\nSAP Origen: %hx", SAPo);
         
-        switch(cabecera[16]&3): 
+        switch(cabecera[16]&3)
         {
             case 1: //se trata de una trama de supervisión
                 printf("\nEs una T-S : trama de supervisión");
-                printf("\nControl: %s", ss[(trama[16]>>2)&3]);
-                if(trama[17]&1){//El P/F = 1
+                printf("\nControl: %s", ss[(cabecera[16]>>2)&3]);
+                if(cabecera[17]&1){//El P/F = 1
                     printf("\nP/F : El bit P/F SÍ está encendido.");
-                    if(trama[15]&1){ //LSB SAPo = 1  entonces F
+                    if(cabecera[15]&1){ //LSB SAPo = 1  entonces F
                         printf("\nEs ------ F (respuesta):");
-                        printf("\nN(s) = %d", (t[16]>>1)&0X7F);
-                        printf("\nN(r) = %d - f", (t[17]>>1)&0X7F);
+                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        printf("\nN(r) = %d - f", (cabecera[17]>>1)&0X7F);
                     }else{ //LSB SAPo = 0  entonces P
-                        printf("\nEs ------ P (comando):")
-                        printf("\nN(s) = %d", (t[16]>>1)&0X7F);
-                        printf("\nN(r) = %d - p", (t[17]>>1)&0X7F);
+                        printf("\nEs ------ P (comando):");
+                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        printf("\nN(r) = %d - p", (cabecera[17]>>1)&0X7F);
                     }
                     
                 }else{
@@ -62,34 +62,37 @@ void analizar_trama(unsigned trama[36], unsigned char tipo){
                 }
                 
                 break;
-            case 3: //se trata de una trama no numerada:
-                unsigned char M = ((control >> 2) & 0x03) | ((control >> 3) & 0x1C);
+            case 3: 
+{
+                // Se trata de una trama no numerada
+                unsigned char M = ((cabecera[16] >> 2) & 0x03) | ((cabecera[16] >> 3) & 0x1C);
                 printf("\nEs una T-U : trama no numerada");
-                if(trama[16]&16){ //El P/F = 1
-                    printf("\nP/F : El bit P/F SÍ está encendido.");
-                    if(trama[15]&1){//Revisamos el LSB de SAPo
+                if(cabecera[16] & 16) { // EL P/F = 1
+                    printf("\nP/F : El bit P/F está encendido.");
+                    if(cabecera[15] & 1) { // Revisamos el LSB de SAPo
                         printf("\nEs una respuesta.");
                         printf("\nControl: %s", ur[M]);
-                    }else {
+                    } else {
                         printf("\nEs un comando.");
                         printf("\nControl: %s", uc[M]);
                     }
-                }else{
+                } else {
                     printf("\nP/F : El bit P/F NO está encendido.");
                 }
                 break;
+            }
             default: //se trata de una trama de información
                 printf("\nEs una T-I : trama de información");
-                if(trama[17]&1){ //El P/F = 1
+                if(cabecera[17]&1){ //El P/F = 1
                     printf("\nP/F : El bit P/F SÍ está encendido.");
-                    if(trama[15]&1){ //LSB SAPo = 1  entonces F
+                    if(cabecera[15]&1){ //LSB SAPo = 1  entonces F
                         printf("\nEs ------ F (respuesta):");
-                        printf("\nN(s) = %d", (t[16]>>1)&0X7F);
-                        printf("\nN(r) = %d - f", (t[17]>>1)&0X7F);
+                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        printf("\nN(r) = %d - f", (cabecera[17]>>1)&0X7F);
                     }else{ //LSB SAPo = 0  entonces P
-                        printf("\nEs ------ P (comando):")
-                        printf("\nN(s) = %d", (t[16]>>1)&0X7F);
-                        printf("\nN(r) = %d - f", (t[17]>>1)&0X7F);
+                        printf("\nEs ------ P (comando):");
+                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        printf("\nN(r) = %d - f", (cabecera[17]>>1)&0X7F);
                     }
                 }else{
                     printf("\nP/F : El bit P/F NO está encendido.");
@@ -101,7 +104,7 @@ void analizar_trama(unsigned trama[36], unsigned char tipo){
         
         
         
-    }
+    // }
     
 }
 
@@ -297,19 +300,18 @@ int main() {
 					 0x73, 0x63, 0x05, 0x65, 0x73, 0x63, 0x6f, 0x6d, 0x03, 0x69, 0x70, 0x6e, 0x02, 0x6d, 0x78, 0x00,
 					 0x00, 0x1c, 0x00, 0x01}};
     unsigned short tot; //Almacenar valor del ToT
-    char i, tipo; //para iteraciones
+    unsigned char i, tipo, n_trama; //para iteraciones
 
+    printf("Ingresa la trama a analizar: ");
+    scanf("%hhu", &n_trama);
+
+    unsigned char cabecera[84];
+
+    for(i=0; i<=84; i++) {
+        cabecera[i] = trama[n_trama][i];
+    }
++
     printf("\t\t%c%cCABECERA ETHERNET%c%c \n", 176, 177, 177, 176);
-    //printf("Ingresa la cabecera Ethernet: \n");
-
-    /*for (i = 0; i < 36; i++)
-    {
-        // Guardar todos los valores en hexadecimal
-        printf("Ingresa el campo %d: ", i+1);
-        scanf("%hx", &temp);
-        cabecera[i] = temp & 255;
-        fflush(stdin);
-    }*/
 
     // Imprimir toda la cabecera
     printf("\n");
@@ -340,11 +342,14 @@ int main() {
     tot = (cabecera[12] << 8) | cabecera[13];
 
     if(tot <= 1500) {
-        printf("\nTamaño (LLC): %d bytes ", tot/8);
         printf("\n\nEs un protocolo LLC");
+        if(cabecera[16]&0 || cabecera[16]&3) {
+            printf("\nTamaño (LLC): 2 bytes ");
+        }
+        else printf("\nTamaño (LLC): 1 byte ");
         tipo = 'L';
         
-        analizar_trama(trama);
+        analizar_trama(cabecera);
     }
     else if(tot == 2048) {
         printf("\n\nEs un protocolo IP");
@@ -360,3 +365,4 @@ int main() {
 
     return 0;
 }
+
