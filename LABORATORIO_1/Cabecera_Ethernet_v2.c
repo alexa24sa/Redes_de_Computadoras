@@ -4,16 +4,11 @@ void analizar_trama(unsigned char cabecera[36]){
     // if(tipo == 'T'){
         unsigned char SAPd = cabecera[14];
         unsigned char SAPo = cabecera[15];
-        unsigned char CC_1 = cabecera[16];
-        unsigned char CC_2 = cabecera[17];
-        unsigned char trama;
-        /*char ss[][5] = {"RR", "RNR", "REJ", "SREJ"};
-        char uc[][5] = {"UI", "SIM", "-", "SARM", "UP", "-", "-", "SABM"};
-        char ur[][5] = {"UI", "RIM", "-", "DM", };*/
         
-        char ss[][5] = {"RR", "RNR", "REJ", "SREJ"};
-        char uc[][15] = {"UI", "SIM", "SARM", "UP", "SABM", "DISC", "SARME", "-", "SABME", "SNRM", "-", "RSET", "XID", "SNRME"};
-        char ur[][15] = {"UI", "RIM", "DM", "-", "-", "RD", "-", "UA", "-", "-", "FRMR", "-", "XID", "-"};
+        const char *ss[] = {"RR", "RNR", "REJ", "SREJ"};
+		const char *uc[] = {"UI", "SIM", "-", "SARM", "UP", "-", "-", "SABM", "DISC", "-", "-", "SARME", "-", "-", "-", "SABME", "SNRM", "-", "-", "RSET", "-", "-", "-", "XID", "-", "-", "-", "SNRME"};
+		const char *ur[] = {"UI", "RIM", "-", "DM", "-", "-", "-", "-", "RD", "-", "-", "-", "UA", "-", "-", "-", "-", "FRMR", "-", "-", "-", "-", "-", "XID", "-", "-", "-", "-"};
+    
         
         //revisamos el tipo de la trama:
         /*
@@ -49,23 +44,26 @@ void analizar_trama(unsigned char cabecera[36]){
                     printf("\nP/F : El bit P/F SÍ está encendido.");
                     if(cabecera[15]&1){ //LSB SAPo = 1  entonces F
                         printf("\nEs ------ F (respuesta):");
-                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        //printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
                         printf("\nN(r) = %d - f", (cabecera[17]>>1)&0X7F);
                     }else{ //LSB SAPo = 0  entonces P
                         printf("\nEs ------ P (comando):");
-                        printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                        //printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
                         printf("\nN(r) = %d - p", (cabecera[17]>>1)&0X7F);
                     }
                     
                 }else{
                     printf("\nP/F : El bit P/F NO está encendido.");
+                    //printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                    printf("\nN(r) = %d", (cabecera[17]>>1)&0X7F);
                 }
                 
                 break;
             case 3: 
 {
                 // Se trata de una trama no numerada
-                unsigned char M = ((cabecera[16] >> 2) & 0x03) | ((cabecera[16] >> 3) & 0x1C);
+                char M = ((cabecera[16] >> 2) & 3) | ((cabecera[16] >> 3) & 28);
+                printf("\n%hx", M);
                 printf("\nEs una T-U : trama no numerada");
                 if(cabecera[16] & 16) { // EL P/F = 1
                     printf("\nP/F : El bit P/F está encendido.");
@@ -96,6 +94,8 @@ void analizar_trama(unsigned char cabecera[36]){
                     }
                 }else{
                     printf("\nP/F : El bit P/F NO está encendido.");
+                    printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
+                    printf("\nN(r) = %d", (cabecera[17]>>1)&0X7F);
                 }
                 
                 
@@ -302,26 +302,30 @@ int main() {
     unsigned short tot; //Almacenar valor del ToT
     unsigned char i, tipo, n_trama; //para iteraciones
 
-    printf("Ingresa la trama a analizar: ");
-    scanf("%hhu", &n_trama);
+	do
+	{
+		printf("Ingresa la trama a analizar: ");
+    	scanf("%hhu", &n_trama);
+	} while (n_trama<1 || n_trama>33);
 
-    unsigned char cabecera[84];
+    unsigned char cabecera[64];
 
-    for(i=0; i<=84; i++) {
-        cabecera[i] = trama[n_trama][i];
+    for(i=0; i<=64; i++) {
+        cabecera[i] = trama[n_trama-1][i];
     }
-+
-    printf("\t\t%c%cCABECERA ETHERNET%c%c \n", 176, 177, 177, 176);
 
+    printf("\t\t%c%cCABECERA ETHERNET%c%c \n", 176, 177, 177, 176);
+    printf("\nBautista Coello Alexandra");
+    printf("\nTaboada Montiel Enrique");
     // Imprimir toda la cabecera
     printf("\n");
     printf("La  trama es la siguiente: ");
     for (i = 0; i < 36; i++)
     {
         if(i==35){
-            printf("%x ", cabecera[i]);
+            printf("%.2x", cabecera[i]);
         }else {
-           printf("%x: ", cabecera[i]); 
+           printf("%.2x:", cabecera[i]); 
         }
     }
 
@@ -341,12 +345,24 @@ int main() {
 
     tot = (cabecera[12] << 8) | cabecera[13];
 
+    printf("\nLos bytes que se dado el tamaño del ToT:");
+    for(i=0; i<tot; i++){
+        if(i==tot-1){
+            printf("%x", cabecera[i]);
+        }else{
+            printf("%x, ", cabecera[i]);  
+        }
+    }
+    //printf("%hx\n", tot);
+    
     if(tot <= 1500) {
         printf("\n\nEs un protocolo LLC");
-        if(cabecera[16]&0 || cabecera[16]&3) {
+        /*if(cabecera[16]&0 ||cabecera[16]&3) {
             printf("\nTamaño (LLC): 2 bytes ");
         }
-        else printf("\nTamaño (LLC): 1 byte ");
+        else printf("\nTamaño (LLC): 1 byte ");*/
+        printf("\nTamaño (LLC) %hd bytes", tot);
+        
         tipo = 'L';
         
         analizar_trama(cabecera);
