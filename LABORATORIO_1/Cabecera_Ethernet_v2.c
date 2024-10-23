@@ -66,13 +66,13 @@ void analizar_trama(unsigned char cabecera[36]){
                 printf("\n%hx", M);
                 printf("\nEs una T-U : trama no numerada");
                 if(cabecera[16] & 16) { // EL P/F = 1
-                    printf("\nP/F : El bit P/F está encendido.");
+                    printf("\nP/F : El bit P/F SÍ está encendido.");
                     if(cabecera[15] & 1) { // Revisamos el LSB de SAPo
-                        printf("\nEs una respuesta.");
-                        printf("\nControl: %s", ur[M]);
+                        printf("\nEs ------ F (respuesta):");
+                        printf("\nControl: %s -- f", ur[M]);
                     } else {
-                        printf("\nEs un comando.");
-                        printf("\nControl: %s", uc[M]);
+                        printf("\nEs ------ P (comando):");
+                        printf("\nControl: %s -- p", uc[M]);
                     }
                 } else {
                     printf("\nP/F : El bit P/F NO está encendido.");
@@ -90,7 +90,7 @@ void analizar_trama(unsigned char cabecera[36]){
                     }else{ //LSB SAPo = 0  entonces P
                         printf("\nEs ------ P (comando):");
                         printf("\nN(s) = %d", (cabecera[16]>>1)&0X7F);
-                        printf("\nN(r) = %d - f", (cabecera[17]>>1)&0X7F);
+                        printf("\nN(r) = %d - p", (cabecera[17]>>1)&0X7F);
                     }
                 }else{
                     printf("\nP/F : El bit P/F NO está encendido.");
@@ -361,7 +361,7 @@ int main() {
             printf("\nTamaño (LLC): 2 bytes ");
         }
         else printf("\nTamaño (LLC): 1 byte ");*/
-        printf("\nTamaño (LLC) %hd bytes", tot);
+        printf("\nTamaño (LLC): %hd bytes", tot);
         
         tipo = 'L';
         
