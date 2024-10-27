@@ -314,7 +314,7 @@ int main() {
         cabecera[i] = trama[n_trama-1][i];
     }
 
-    printf("\t\t%c%cCABECERA ETHERNET%c%c \n", 176, 177, 177, 176);
+    printf("\t\t%c%cANALISIS DE TRAMAS%c%c \n", 176, 177, 177, 176);
     printf("\nBautista Coello Alexandra");
     printf("\nTaboada Montiel Enrique");
     // Imprimir toda la cabecera
@@ -328,40 +328,52 @@ int main() {
            printf("%.2x:", cabecera[i]); 
         }
     }
-
+    
+    printf("\n");
+	printf("\t\t%c%cCABECERA ETHERNET%c%c \n", 176, 177, 177, 176);
     // Imprimir Mac destino
     printf("\nLa MAC destino es: \n");
     for (i = 0; i < 6; i++)
     {
-        printf("%x, ", cabecera[i]);
+        if(i==5){
+    		printf("%.2x ", cabecera[i]);
+		}else{
+			printf("%.2x: ", cabecera[i]);
+		}
     }
 
     // imprimir MAC origen
     printf("\nLa MAC origen es: \n");
     for (i = 6; i < 12; i++)
     {
-        printf("%x, ", cabecera[i]);
+    	if(i==11){
+    		printf("%.2x ", cabecera[i]);
+		}else{
+			printf("%.2x: ", cabecera[i]);
+		}
     }
 
     tot = (cabecera[12] << 8) | cabecera[13];
-
-    printf("\nLos bytes que se dado el tamaño del ToT:");
+	
+	printf("\nTamaño (LLC): %hd bytes", tot);
+    /*printf("\nLos bytes que se dado el tamaño del ToT: ");
     for(i=0; i<tot; i++){
         if(i==tot-1){
             printf("%x", cabecera[i]);
         }else{
-            printf("%x, ", cabecera[i]);  
+            printf("%x:", cabecera[i]);  
         }
-    }
+    }*/
     //printf("%hx\n", tot);
     
+    printf("\t\t%c%cCABECERA LLC%c%c \n", 176, 177, 177, 176);
     if(tot <= 1500) {
         printf("\n\nEs un protocolo LLC");
         /*if(cabecera[16]&0 ||cabecera[16]&3) {
             printf("\nTamaño (LLC): 2 bytes ");
         }
         else printf("\nTamaño (LLC): 1 byte ");*/
-        printf("\nTamaño (LLC): %hd bytes", tot);
+        //printf("\nTamaño (LLC): %hd bytes", tot);
         
         tipo = 'L';
         
@@ -381,4 +393,3 @@ int main() {
 
     return 0;
 }
-
