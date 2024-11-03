@@ -96,7 +96,18 @@ void analizarLLC(unsigned char cabecera[36]){
 void analizarARP(unsigned char cabecera[36]) {
 
 	// Tipo de direccion HW
-	if ((cabecera[14]<<8 | cabecera[15]) == 1) {
+	if ((cabecera[14]<<8 | cabecera[15]) == 1) { /*
+	se suman los bits de cabecera[14] con cabecera[15] para que se complenten los 2 bytes
+	de tipo de direcciones de hadware que se pueden revisar del mapa de memoria
+	si al unirlos nos da un valor de 1, es decir:
+	0000 0000 0000 0001
+	según las cofiguraciones proporcionadas en clase, tenemos lo siguiente:
+	00 01 Ethernet
+	00 06 IEE 802 Token
+	00 0F Frame Relay 
+	00 01 ATM 
+	
+	*/
 		printf("Tipo de direccion HW: Ethernet\n");
 	} else if((cabecera[14]<<8 | cabecera[15]) == 6){
 		printf("Tipo de direccion HW: IEEE 802 LAN\n");
@@ -355,7 +366,7 @@ int main() {
 		{
 			printf("Ingresa la trama a analizar: ");
 			scanf("%hhu", &n_trama);
-		} while (n_trama<1 || n_trama>33);
+		} while (n_trama<1 || n_trama>36);
 
 		for(i=0; i<=64; i++) {
         cabecera[i] = trama[n_trama-1][i];
@@ -446,17 +457,18 @@ int main() {
         analizarLLC(cabecera);
     }
     else if(tot == 2048) {
-        printf("\n\nEs un protocolo IP");
+        printf("\n\nEs un protocolo IP\n");
         tipo = 'I';
     }
     else if(tot == 2054) {
-        printf("\n\nEs un protocolo ARP");
+        printf("\n\nEs un protocolo ARP\n");
+        printf("\t\t%c%cANALISIS ARP%c%c \n", 176, 177, 177, 176);
         tipo = 'A';
 
 		analizarARP(cabecera);
 
     }else{
-        printf("\n\nEs OTRO protocolo.");
+        printf("\n\nEs OTRO protocolo.\n");
     }
 
 
