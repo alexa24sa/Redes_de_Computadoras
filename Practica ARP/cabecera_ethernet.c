@@ -94,16 +94,16 @@ void analizarLLC(unsigned char cabecera[36]){
 void analizarARP(unsigned char cabecera[36]) {
 
 	// Tipo de direccion HW
-	if ((cabecera[14]<<8 & cabecera[15]) == 1) {
+	if ((cabecera[14]<<8 | cabecera[15]) == 1) {
 		printf("Tipo de direccion HW: Ethernet\n");
-	} else if((cabecera[14]<<8 & cabecera[15]) == 6){
+	} else if((cabecera[14]<<8 | cabecera[15]) == 6){
 		printf("Tipo de direccion HW: IEEE 802 LAN\n");
 	} else {
 		printf("Tipo de direccion HW: Otro\n");
 	}
 
 	// Tipo de direccion de protocolo
-	if ((cabecera[16]<<8 & cabecera[17]) == 0x0800) {
+	if ((cabecera[16]<<8 | cabecera[17]) == 0x0800) {
 		printf("Tipo de direccion de protocolo: IPv4\n");
 	} else {
 		printf("Tipo de direccion de protocolo: Otro, %.2x: %.2x\n", cabecera[16], cabecera[17]);
@@ -119,9 +119,9 @@ void analizarARP(unsigned char cabecera[36]) {
 	printf("Tamaño de la direccion de protocolo: %d bytes\n", cabecera[19]);
 
 	// Operacion
-	if ((cabecera[20]<<8 & cabecera[21]) == 1) {
+	if ((cabecera[20]<<8 | cabecera[21]) == 1) {
 		printf("Operacion: Request\n");
-	} else if ((cabecera[20]<<8 & cabecera[21]) == 2) {
+	} else if ((cabecera[20]<<8 | cabecera[21]) == 2) {
 		printf("Operacion: Reply\n");
 	} else {
 		printf("Operacion: Otro\n");
