@@ -112,7 +112,7 @@ void analizarARP(unsigned char cabecera[36]) {
 	} else if((cabecera[14]<<8 | cabecera[15]) == 6){
 		printf("Tipo de direccion HW: IEEE 802 LAN\n");
 	} else {
-		printf("Tipo de direccion HW: Otro\n");
+		printf("Tipo de direccion HW: Otro %d\n", cabecera[14]<<8 | cabecera[15]);
 	}
 
 	// Tipo de direccion de protocolo
