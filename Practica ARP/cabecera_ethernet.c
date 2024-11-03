@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 
 // *************************** SECCION LLC ***************************
@@ -141,7 +143,17 @@ void analizarARP(unsigned char cabecera[36]) {
 
 }
 
+char menu() {
+	char opcion;
+	printf("Menu:\n");
+	printf("1. Seleccionar trama existente\n");
+	printf("2. Ingresar trama manualmente\n");
+	printf("3. Leer trama desde archivo\n");
+	printf("Selecciona una opcion: ");
+	scanf("%c", &opcion);
 
+	return opcion;
+}
 
 int main() {
 
@@ -333,18 +345,53 @@ int main() {
 					 0x00, 0x1c, 0x00, 0x01}};
     unsigned short tot; //Almacenar valor del ToT
     unsigned char i, tipo, n_trama; //para iteraciones
+	char opcion;
+	unsigned char cabecera[64];
 
-	do
-	{
-		printf("Ingresa la trama a analizar: ");
-    	scanf("%hhu", &n_trama);
-	} while (n_trama<1 || n_trama>33);
+	opcion = menu();
+	
+	if(opcion == '1'){
+		do
+		{
+			printf("Ingresa la trama a analizar: ");
+			scanf("%hhu", &n_trama);
+		} while (n_trama<1 || n_trama>33);
 
-    unsigned char cabecera[64];
-
-    for(i=0; i<=64; i++) {
+		for(i=0; i<=64; i++) {
         cabecera[i] = trama[n_trama-1][i];
     }
+	}
+	else if(opcion == '2'){
+		// Llenar cabecera con una trama ARP automática
+		unsigned char temp_cabecera[64] = {
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x23, 0x8b, 0x46, 0xe9, 0xad, 0x08, 0x06, 0x00, 0x01,
+			0x08, 0x00, 0x06, 0x04, 0x00, 0x01, 0x00, 0x23, 0x8b, 0x46, 0xe9, 0xad, 0xc0, 0xa8, 0x01, 0x01,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0xa8, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+		};
+		memcpy(cabecera, temp_cabecera, sizeof(temp_cabecera));
+	}
+	else if(opcion == '3'){
+		char *filename = (char *)malloc(100 * sizeof(char));
+		printf("Ingresa el nombre del archivo: ");
+		scanf("%s", filename);
+
+		FILE *file = fopen(filename, "r");
+		if (file == NULL) {
+			printf("No se pudo abrir el archivo.\n");
+			exit(1);
+		}
+
+		for (i = 0; i < 64; i++) {
+			fscanf(file, "%2hhx,", &cabecera[i]);
+		}
+
+		fclose(file);
+	}
+	else{
+		printf("Opcion no valida");
+		return 0;
+	}
 
     printf("\t\t%c%cANALISIS DE TRAMAS%c%c \n", 176, 177, 177, 176);
     printf("\nBautista Coello Alexandra");
@@ -387,9 +434,10 @@ int main() {
 
     tot = (cabecera[12] << 8) | cabecera[13];
     
-    printf("\t\t%c%cCABECERA LLC%c%c \n", 176, 177, 177, 176);
     if(tot <= 1500) {
         printf("\n\nEs un protocolo LLC");
+
+		printf("\t\t%c%cCABECERA LLC%c%c \n", 176, 177, 177, 176);
 
 		printf("\nTamaño (LLC): %hd bytes", tot);
         
