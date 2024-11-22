@@ -156,7 +156,7 @@ void analizarARP(unsigned char cabecera[36]) {
 
 
 // *************************** Funcion Checksum ***************************
-void funcionCheksum(unsigned char *message) {
+void funcionCheksum(unsigned char *trama) {
     unsigned char checksum[4];
     unsigned char sumas[5];
     unsigned char sum=0, aux, aux2;
@@ -173,19 +173,19 @@ void funcionCheksum(unsigned char *message) {
             else {
                 if(j&1) {
                     if(i==0) {
-                        sum += message[j] & 0x0F;
+                        sum += trama[j] & 0x0F;
                         
                     }
                     else if(i==1) {
-                        sum += (message[j] & 0xF0) >> 4;
+                        sum += (trama[j] & 0xF0) >> 4;
                     }
                 }
                 else {
                     if(i==2) {
-                        sum += message[j] & 0x0F;
+                        sum += trama[j] & 0x0F;
                     }
                     else if(i==3) {
-                        sum += (message[j] & 0xF0) >> 4;
+                        sum += (trama[j] & 0xF0) >> 4;
                     }
                 }
             }
@@ -215,12 +215,19 @@ void funcionCheksum(unsigned char *message) {
         j--;
     }
 
+    printf("Antes: %x %x %x %x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
+    // sacar complementos a checksum
+    for (i = 0; i < 4; i++)
+    {
+        checksum[i] = 0x0F - checksum[i];
+    }
+
     printf("Checksum: %x %x %x %x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
     aux = checksum[0] << 4 | checksum[1];
     aux2 = checksum[2] << 4 | checksum[3];
-    if (aux == message[10] && aux2 == message[11]) {
+    if (aux == trama[10] && aux2 == trama[11]) {
         printf("ACK\n");
-    } else if(message[10] == 0 && message[11] == 0) {
+    } else if(trama[10] == 0 && trama[11] == 0) {
         printf("Checksum calculado: %x%x%x%x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
     }
     else {
@@ -472,7 +479,7 @@ int main() {
         cabecera[i] = T[n_trama-1][i];
     }
 
-    // funcionCheksum(cabecera);
+    funcionCheksum(cabecera);
 
     printf("\t\t%c%cANALISIS DE TRAMAS%c%c \n", 176, 177, 177, 176);
     printf("\nBautista Coello Alexandra");
