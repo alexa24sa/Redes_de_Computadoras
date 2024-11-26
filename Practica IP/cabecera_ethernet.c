@@ -338,7 +338,7 @@ void analizarIP(unsigned char cabecera[36]) {
 
 	// Checksum
 	// unsigned char checksum[];
-	analizarChecksum(cabecera+14);
+	funcionCheksum(cabecera+14);
 
 	// Direccion IP origen
 	printf("Direccion IP origen: %d.%d.%d.%d\n", cabecera[26], cabecera[27], cabecera[28], cabecera[29]);
@@ -609,8 +609,6 @@ int main() {
     for(i=0; i<=128; i++) {
         cabecera[i] = T[n_trama-1][i];
     }
-
-    funcionCheksum(cabecera);
 
     printf("\t\t%c%cANALISIS DE TRAMAS%c%c \n", 176, 177, 177, 176);
     printf("\nBautista Coello Alexandra");
