@@ -253,19 +253,34 @@ void analizarIP(unsigned char cabecera[36]) {
 	}
 
 	// Tipo de servicio
-	printf("Tipo de servicio: \n");
-	if(cabecera[15] & 0x01) {
-		printf("D\n");
-	} 
-	if(cabecera[15] & 0x02) {
-		printf("T\n");
+	printf("Tipo de servicio: ");
+	if (cabecera[15] & 0x01) {
+		printf("0");
 	}
-	if(cabecera[15] & 0x04) {
-		printf("R\n");
+	if (cabecera[15] & 0x02) {
+		printf("0");
 	}
-	if(cabecera[15] & 0x08) {
-		printf("C\n");
+	if (cabecera[15] & 0x04) {
+		printf("0");
 	}
+	if (cabecera[15] & 0x08) {
+		printf("D");
+	}
+	if (cabecera[15] & 0x10) {
+		printf("T");
+	}
+	if (cabecera[15] & 0x20) {
+		printf("R");
+	}
+	if(cabecera[15] & 0x40) {
+		printf("C");
+	}
+	if(cabecera[15] & 0x80) {
+		printf("X");
+	}
+
+	printf("\n");
+
 
 	// Longitud total
 	printf("Longitud total: %d\n", cabecera[16] << 8 | cabecera[17]);
