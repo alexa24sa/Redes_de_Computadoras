@@ -220,7 +220,7 @@ void funcionCheksum(unsigned char *trama) {
         checksum[i] = 0x0F - checksum[i];
     }
 
-    printf("Checksum: %x %x %x %x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
+    printf("Checksum: %x %x %x %x\n", trama[10] & 0x0F, trama[10] >> 4, trama[11] & 0x0F, trama[11] >> 4);
     aux = checksum[0] << 4 | checksum[1];
     aux2 = checksum[2] << 4 | checksum[3];
     if (aux == trama[10] && aux2 == trama[11]) {
@@ -291,13 +291,14 @@ void analizarIP(unsigned char cabecera[36]) {
 	// Flags
 	printf("Flags: \n");
 	if(cabecera[20] << 5 & 0) {
-		printf("x\n");
+		printf("x");
 	}
 	else if(cabecera[20] << 5 & 1) {
-		printf("D\n");
+		printf("D");
 	} else {
-		printf("M\n");
+		printf("M");
 	}
+	printf("\n");
 
 	// Fragment offset
 	printf("Fragment offset: %d\n", ((cabecera[20] & 0x1F) << 8) | cabecera[21]);
@@ -607,6 +608,13 @@ int main() {
 			0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 
 			0x77, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 
 			0x68, 0x69
+		},
+		{
+			0x4D, 0x36, 0xE9, 0x72, 0xE3, 0x25, 0x00, 0x13,
+			0x49, 0x00, 0x01, 0x02, 0x08, 0x00, 0x48, 0x04,
+			0x1C, 0xFC, 0x12, 0x34, 0x38, 0x40, 0x23, 0x06,
+			0x00, 0x00, 0xAC, 0x1E, 0x64, 0x43, 0xAC, 0x1E,
+			0xF2, 0x15, 0xFF, 0xFF, 0xFF, 0xFF
 		}
     };
 
@@ -619,7 +627,7 @@ int main() {
 	{
 		printf("Ingresa la trama a analizar: ");
     	scanf("%hhu", &n_trama);
-	} while (n_trama<1 || n_trama>5);
+	} while (n_trama<1 || n_trama>6);
 
     for(i=0; i<=128; i++) {
         cabecera[i] = T[n_trama-1][i];
