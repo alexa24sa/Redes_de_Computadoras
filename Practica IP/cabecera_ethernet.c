@@ -154,6 +154,86 @@ void analizarARP(unsigned char cabecera[36]) {
 
 }
 
+// *************************** Funcion Checksum ***************************
+void funcionCheksum(unsigned char *trama) {
+    unsigned char checksum[4];
+    unsigned char sumas[5];
+    unsigned char sum=0, aux, aux2;
+    
+    char i, j;
+
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 20; j++)
+        {
+            if(j==10 || j==11) {
+                continue;
+            }
+            else {
+                if(j&1) {
+                    if(i==0) {
+                        sum += trama[j] & 0x0F;
+                        
+                    }
+                    else if(i==1) {
+                        sum += (trama[j] & 0xF0) >> 4;
+                    }
+                }
+                else {
+                    if(i==2) {
+                        sum += trama[j] & 0x0F;
+                    }
+                    else if(i==3) {
+                        sum += (trama[j] & 0xF0) >> 4;
+                    }
+                }
+            }
+
+        }
+
+        sumas[i] = sum&0x0F;
+        sum = sum >> 4;
+        
+    }
+
+    sumas[4] = sum;
+    j = 3;
+    aux = 0;
+
+    for (i = 0; i < 4; i++)
+    {
+        if(i==0) {
+            sum = sumas[i] + sumas[4];
+        }
+        else {
+            sum = aux + sumas[i];
+        }
+        aux = sum & 0xF0;
+        sum = sum & 0x0F;
+        checksum[j] = sum;
+        j--;
+    }
+
+    // sacar complementos a checksum
+    for (i = 0; i < 4; i++)
+    {
+        checksum[i] = 0x0F - checksum[i];
+    }
+
+    printf("Checksum: %x %x %x %x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
+    aux = checksum[0] << 4 | checksum[1];
+    aux2 = checksum[2] << 4 | checksum[3];
+    if (aux == trama[10] && aux2 == trama[11]) {
+        printf("ACK\n");
+    } else if(trama[10] == 0 && trama[11] == 0) {
+        printf("Checksum calculado: %x%x%x%x\n", checksum[0], checksum[1], checksum[2], checksum[3]);
+    }
+    else {
+        printf("NACK\n");
+    }    
+    
+}   
+
 
 // *************************** SECCION IP ***************************
 void analizarIP(unsigned char cabecera[36]) {
@@ -211,11 +291,54 @@ void analizarIP(unsigned char cabecera[36]) {
 	printf("Tiempo de vida: %d\n", cabecera[22]);
 
 	// Protocolo
-	printf("Protocolo: %d\n", cabecera[23]);
+	printf("Protocolo: ");
+	switch (cabecera[23])
+	{
+		case 1:
+			printf("ICMP\n");
+			break;
+		case 2:
+			printf("IGMP\n");
+			break;
+		case 6:
+			printf("TCP\n");
+			break;
+		case 9:
+			printf("IGRP\n");
+			break;
+		case 17:
+			printf("UDP\n");
+			break;
+		case 47:
+			printf("GRE\n");
+			break;
+		case 50:
+			printf("ESP\n");
+			break;
+		case 51:
+			printf("AH\n");
+			break;
+		case 57:
+			printf("SKIP\n");
+			break;
+		case 88:
+			printf("EIGRP\n");
+			break;
+		case 89:
+			printf("OSPF\n");
+			break;
+		case 115:
+			printf("L2TP\n");
+			break;
+		
+		default:
+			printf("Otro\n");
+			break;
+	}
 
 	// Checksum
 	// unsigned char checksum[];
-	analizarChecksum(cabecera);
+	analizarChecksum(cabecera+14);
 
 	// Direccion IP origen
 	printf("Direccion IP origen: %d.%d.%d.%d\n", cabecera[26], cabecera[27], cabecera[28], cabecera[29]);
@@ -223,72 +346,6 @@ void analizarIP(unsigned char cabecera[36]) {
 	// Direccion IP destino
 	printf("Direccion IP destino: %d.%d.%d.%d\n", cabecera[30], cabecera[31], cabecera[32], cabecera[33]);
 
-}
-
-
-// *************************** Funcion Checksum ***************************
-void funcionCheksum(unsigned char *trama) {
-	unsigned short * resultado;
-    unsigned short sumas[5];
-    unsigned short suma=0, aux;
-    
-    char i, j;
-
-    for (i = 0; i < 4; i++)
-    {
-        for (j = 0; j < 16; j++)
-        {
-            if(j==10 || j==11) {
-                continue;
-            }
-            else {
-                if(j&1) {
-                    if(i==0) {
-                        suma += trama[j] & 0x0F;
-                        
-                    }
-                    else if(i==1) {
-                        suma += (trama[j] & 0xF0) >> 4;
-                    }
-                }
-                else {
-                    if(i==2) {
-                        suma += trama[j] & 0x0F;
-                    }
-                    else if(i==3) {
-                        suma += (trama[j] & 0xF0) >> 4;
-                    }
-                }
-            }
-
-        }
-
-        sumas[i] = suma&0x0F;
-        suma = suma >> 4;
-        
-    }
-
-    sumas[4] = suma;
-    j = 3;
-    aux = 0;
-
-    for (i = 0; i < 4; i++)
-    {
-        if(i==0) {
-            suma = sumas[i] + sumas[4];
-        }
-        else {
-            suma = aux + sumas[i];
-        }
-        aux = suma & 0xF0;
-        suma = suma & 0x0F;
-        printf("Suma: %x\n", suma);
-        printf("Aux: %x\n", aux);
-        resultado[j] = suma;
-        j--;
-    }
-    
-    
 }
 
 char menu() {
