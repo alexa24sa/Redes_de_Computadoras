@@ -595,58 +595,22 @@ int main() {
 		}
     };
 
-	
-
     unsigned short tot; //Almacenar valor del ToT
     unsigned char i, tipo, n_trama; //para iteraciones
 	char opcion;
 	unsigned char cabecera[64];
 
-	opcion = menu();
-	
-	if(opcion == '1'){
-		do
-		{
-			printf("Ingresa la trama a analizar: ");
-			scanf("%hhu", &n_trama);
-		} while (n_trama<1 || n_trama>36);
+	do
+	{
+		printf("Ingresa la trama a analizar: ");
+    	scanf("%hhu", &n_trama);
+	} while (n_trama<1 || n_trama>5);
 
-		for(i=0; i<=64; i++) {
-        cabecera[i] = trama[n_trama-1][i];
+    for(i=0; i<=128; i++) {
+        cabecera[i] = T[n_trama-1][i];
     }
-	}
-	else if(opcion == '2'){
-		// Llenar cabecera con una trama ARP automática
-		unsigned char temp_cabecera[64] = {
-			0x00, 0xD0, 0xBA, 0xC0, 0x67, 0x29, 0x00, 0x60, 0x5C, 0x0A, 0xA3, 0x64, 0x08, 0x06, 0x00, 0x01,
-			0x08, 0x00, 0x06, 0x04, 0x00, 0x02, 0x00, 0x60, 0x5C, 0x0A, 0xA3, 0x64, 0x01, 0x00, 0x00, 0x02,
-			0x00, 0xD0, 0xBA, 0xC0, 0x67, 0x29, 0x01, 0x00, 0x00, 0x01
 
-
-		};
-		memcpy(cabecera, temp_cabecera, sizeof(temp_cabecera));
-	}
-	else if(opcion == '3'){
-		char *filename = (char *)malloc(100 * sizeof(char));
-		printf("Ingresa el nombre del archivo: ");
-		scanf("%s", filename);
-
-		FILE *file = fopen(filename, "r");
-		if (file == NULL) {
-			printf("No se pudo abrir el archivo.\n");
-			exit(1);
-		}
-
-		for (i = 0; i < 64; i++) {
-			fscanf(file, "%2hhx,", &cabecera[i]);
-		}
-
-		fclose(file);
-	}
-	else{
-		printf("Opcion no valida");
-		return 0;
-	}
+    funcionCheksum(cabecera);
 
     printf("\t\t%c%cANALISIS DE TRAMAS%c%c \n", 176, 177, 177, 176);
     printf("\nBautista Coello Alexandra");
