@@ -37,7 +37,7 @@ int main() {
     }
 
     // 3
-    else if(t[12] << 8 | t[13] <= 1500) {
+    else if((t[12] << 8 | t[13]) <= 1500) {
         printf("Es un protocolo LLC\n");
 
         char tipo = t[16] & 3;
@@ -51,10 +51,10 @@ int main() {
     }
 
     // 4
-    else if(t[12] << 8 | t[13] == 0x0806) {
+    else if((t[12] << 8 | t[13]) == 0x0806) {
         printf("Es un protocolo ARP\n");
 
-        if(t[14] << 8 | t[15] == 0x0001) {
+        if((t[14] << 8 | t[15]) == 0x0001) {
             printf("ATM\n");
 
             if(t[20] << 8 | t[21] == 0x0002) {
@@ -66,7 +66,7 @@ int main() {
     }
 
     // 5
-    else if(t[12] << 8 | t[13] == 0x0800) {
+    else if((t[12] << 8 | t[13]) == 0x0800) {
         printf("Es un protocolo IP\n");
 
         char IHL = t[14] & 0x0F;
@@ -84,7 +84,7 @@ int main() {
     }
 
     // 6
-    else if(t[12] << 8 | t[13] <= 1500) {
+    else if((t[12] << 8 | t[13]) <= 1500) {
         printf("Es un protocolo LLC\n");
 
         char tipo = t[16] & 3;
