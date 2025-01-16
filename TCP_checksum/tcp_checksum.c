@@ -2,6 +2,86 @@
 #include <stdlib.h>
 
 // codigo para obtener el checksum:
+void funcionCheksum(unsigned char *pseudo_tcp, unsigned short tcpHeaderSize, unsigned char checksum_tcp[4]) {
+    //unsigned char checksum[4];
+    unsigned char sumas[5];
+    unsigned char sum=0, aux, aux2;
+    
+    char i, j;
+
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < (tcpHeaderSize+12); j++)
+        {
+            if(j==28 || j==29) {
+                continue;
+            }
+            else {
+                if(j&1) {
+                    if(i==0) {
+                        sum += pseudo_tcp[j] & 0x0F;
+                        
+                    }
+                    else if(i==1) {
+                        sum += (pseudo_tcp[j] & 0xF0) >> 4;
+                    }
+                }
+                else {
+                    if(i==2) {
+                        sum += pseudo_tcp[j] & 0x0F;
+                    }
+                    else if(i==3) {
+                        sum += (pseudo_tcp[j] & 0xF0) >> 4;
+                    }
+                }
+            }
+
+        }
+
+        sumas[i] = sum&0x0F;
+        sum = sum >> 4;
+        
+    }
+
+    sumas[4] = sum;
+    j = 3;
+    aux = 0;
+
+    for (i = 0; i < 4; i++)
+    {
+        if(i==0) {
+            sum = sumas[i] + sumas[4];
+        }
+        else {
+            sum = aux + sumas[i];
+        }
+        aux = sum & 0xF0;
+        sum = sum & 0x0F;
+        checksum_tcp[j] = sum;
+        j--;
+    }
+
+    printf("\nAntes: %x %x %x %x\n", checksum_tcp[0], checksum_tcp[1], checksum_tcp[2], checksum_tcp[3]);
+    // sacar complementos a checksum
+    for (i = 0; i < 4; i++)
+    {
+        checksum_tcp[i] = 0x0F - checksum_tcp[i];
+    }
+
+    printf("Checksum: %x %x %x %x\n", checksum_tcp[0], checksum_tcp[1], checksum_tcp[2], checksum_tcp[3]);
+    aux = checksum_tcp[0] << 4 | checksum_tcp[1];
+    aux2 = checksum_tcp[2] << 4 | checksum_tcp[3];
+    if (aux == pseudo_tcp[28] && aux2 == pseudo_tcp[29]) {
+        printf("ACK\n");
+    } else if(pseudo_tcp[28] == 0 && pseudo_tcp[29] == 0) {
+        printf("Checksum calculado: %x%x%x%x\n", checksum_tcp[0], checksum_tcp[1], checksum_tcp[2], checksum_tcp[3]);
+    }
+    else {
+        printf("NACK\n");
+    }    
+    
+}
+
 
 // código para obtener la pseudocabecera
 void pseudocabecera(unsigned char *trama, unsigned char IHL, unsigned char pseudo_tcp[128]){
@@ -36,7 +116,7 @@ void pseudocabecera(unsigned char *trama, unsigned char IHL, unsigned char pseud
     
     for(i= 0; i<tcpHeaderSize; i++){ // el for se repetira hasta alcanzar
     // el tamanio maximo de la pseudocabecera
-        pseudo_tcp[12 + i] = trama[IHL+1+14+i]; 
+        pseudo_tcp[12 + i] = trama[IHL+14+i]; 
     }
     
 }
@@ -70,14 +150,20 @@ int main(){
             printf("PSEUDOCABECERA: ");
             unsigned char dataOffset_nibble = (t[IHL + 12 + 14] & 0xF0) >> 4;
             unsigned short tcpHeaderSize = dataOffset_nibble * 4;
-            for (i= 0; i<(tcpHeaderSize+11); i++){
-                if( i==(tcpHeaderSize+10)){
+            for (i= 0; i<(tcpHeaderSize+12); i++){
+                if( i==(tcpHeaderSize+11)){
                     printf(" %.2x", pseudo_tcp[i]);
                     
                 }else {
                     printf(" %.2x:", pseudo_tcp[i]);
                 }
             }
+            
+            // obtenemos el valor del checksum
+            unsigned char checksum_tcp[4] = {0};
+            funcionCheksum(pseudo_tcp, tcpHeaderSize, checksum_tcp);
+            
+            
             
             
         } else {
